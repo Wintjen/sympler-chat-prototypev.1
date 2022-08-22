@@ -4,7 +4,7 @@ import './App.css'
 import 'react-chat-widget/lib/styles.css';
 import axios from 'axios';
 
-import logo from './logo.svg';
+import logo from './sympler-logo.jpeg';
 
 interface MenuItems {
   label: string,
@@ -98,52 +98,6 @@ function App() {
     handleNewUserMessage(e);
   };
 
-  let chipotleItems = [
-    {
-      label: 'Burrito',
-      value: 'Burrito'
-    },
-    {
-      label: 'Burrito Bowl',
-      value: 'Burrito Bowl'
-    },
-    {
-      label: 'Lifestyle Bowl',
-      value: 'Lifestyle Bowl'
-    },
-    {
-      label: 'Quesadilla',
-      value: 'Quesadilla'
-    },
-    {
-      label: 'Salad',
-      value: 'Salad'
-    },
-    {
-      label: 'Tacos',
-      value: 'Tacos'
-    },
-  ]
-
-  let perMonth = [
-    {
-      label: '1-2',
-      value: '1-2'
-    },
-    {
-      label: '3-7',
-      value: '3-7'
-    },
-    {
-      label: '8-14',
-      value: '8-14'
-    },
-    {
-      label: '15+',
-      value: '15+'
-    }
-  ]
-
   let buttons = [
     {
       label: 'Yes',
@@ -179,10 +133,10 @@ function App() {
         <Widget
           handleNewUserMessage={handleNewUserMessage}
           profileAvatar={logo}
-          title="Title"
-          subtitle="Subtitle"
+          title="Messages"
+          subtitle="Chipotle Questions"
           handleQuickButtonClicked={hanleQuckButtonClick}
-          emojis={true}
+          emojis={false}
           fullScreenMode={true}
           imagePreview
         />

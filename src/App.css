@@ -10,10 +10,71 @@
   display: grid !important;
 }
 
+.quick-button {
+  /* width: 10%;
+  height: 35px;
+  border: 1px transparent !important; 
+  border-radius: 30px !important;
+  background-image: linear-gradient(white, white), linear-gradient(90deg, rgb(31, 0, 92), rgb(91, 0, 96), rgb(135, 1, 96), rgb(172, 37, 94), rgb(202, 72, 92), rgb(225, 107, 92), rgb(243, 144, 96), rgb(255, 181, 107)) !important;
+  background-origin: border-box !important;
+  background-clip: content-box, border-box !important;
+  padding: 4px 4px !important */
+  border-color: #635ec0 !important;
+}
+
+.rcw-client .rcw-message-text {
+  background-color: #635ec0 !important;
+}
+
+.rcw-client p {
+  color: white !important;
+}
+
+.quick-button:active {
+  background: transparent !important;
+  color: black !important;
+}
+
 .quick-buttons-container .quick-buttons {
   text-align: right !important;
 }
 
 .quick-buttons-container .quick-buttons .quick-list-button {
   margin-bottom: 5px !important;
+}
+
+.rcw-conversation-container .rcw-header {
+  background: linear-gradient(90deg, rgb(31, 0, 92, .5), rgb(91, 0, 96, .5), rgb(135, 1, 96, .5), rgb(172, 37, 94, .5), rgb(202, 72, 92, .5), rgb(225, 107, 92, .5), rgb(243, 144, 96, .5), rgb(255, 181, 107, .5)) !important;
+}
+
+.rcw-full-screen .rcw-close-button {
+  background-color: transparent !important;
+}
+
+.rcw-sender {
+  background-color: transparent !important;
+  border-top: 2px #A2C0FC solid;
+  align-items: center !important;
+}
+
+.rcw-picker-btn {
+  display: none;
+}
+
+.rcw-send {
+  background-color: transparent !important;
+}
+
+.rcw-response .rcw-message-text {
+  background-color: #DC7B5C66 !important;
+}
+
+.rcw-header {
+  color: white !important;
+  padding-bottom: 10px !important;
+  padding-top: 10px !important;
+}
+
+.rcw-close-button {
+  display: none !important
 }
