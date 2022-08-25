@@ -137,7 +137,6 @@ function App() {
           subtitle="Chipotle Questions"
           handleQuickButtonClicked={hanleQuckButtonClick}
           emojis={false}
-          fullScreenMode={true}
           imagePreview
         />
       </div>
