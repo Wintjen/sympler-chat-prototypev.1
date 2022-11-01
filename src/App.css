@@ -1,5 +1,6 @@
 .rcw-conversation-container {
   max-width: 100vw !important;
+  min-width: 75vw !important;
 }
 
 .quick-buttons-container {

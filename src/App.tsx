@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Widget, addResponseMessage, setQuickButtons, addUserMessage, toggleMsgLoader, toggleWidget } from 'react-chat-widget';
+import { Widget, addResponseMessage, setQuickButtons, addUserMessage, toggleMsgLoader, toggleWidget } from 'drew-react-chat-widget-custom';
+
 import './App.css'
-import 'react-chat-widget/lib/styles.css';
+import 'drew-react-chat-widget-custom/lib/styles.css';
 import axios from 'axios';
 
 import logo from './sympler-logo.jpeg';
@@ -25,13 +26,13 @@ function App() {
   const [days, setDays] = useState<MenuItems[]>([]);
 
   useEffect(() => {
-    addResponseMessage('Hello, could we ask you some questions about Chipotle? ![vertical](https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/Chipotle_Mexican_Grill_logo.svg/800px-Chipotle_Mexican_Grill_logo.svg.png)');
+    addResponseMessage('Hello, could we ask you some questions about Chipotle? We will store your display name and any message or content you share with us, and we will use this only for research purposes. This study is being conducted by Sympler, a research company. To start suervey, go ahead and click that "OK" button! By clicking "OK", you consent to the collection and use of any information you provide.');
   }, []);
 
   const handleNewUserMessage = (newMessage: string) => {
     console.log(`New message incoming! ${newMessage}`);
     // Now send the message throught the backend API
-    if (newMessage === 'Yes' && firstQuestion) {
+    if (newMessage === 'OK' && firstQuestion) {
       setQuickButtons([])
       toggleMsgLoader();
       setTimeout(() => {
@@ -41,8 +42,9 @@ function App() {
         setSecondQuestion(true)
         toggleMsgLoader();
       },1500)
-    } else if (newMessage === 'No' && firstQuestion) {
+    } else if (newMessage === 'NO THANKS' && firstQuestion) {
       setFirstQuestion(false)
+      
       return
     }
     if (newMessage && secondQuestion) {
@@ -100,12 +102,12 @@ function App() {
 
   let buttons = [
     {
-      label: 'Yes',
-      value: 'Yes'
+      label: 'OK',
+      value: 'OK'
     },
     {
-      label: 'No',
-      value: 'No',
+      label: 'NO THANKS',
+      value: 'N0 THANKS',
     },
   ];
 
@@ -128,6 +130,10 @@ function App() {
     })
   }
 
+  const sendImageFile = (p: string) => {
+    console.log('image has been updated')
+  }
+
     return (
       <div className="App">
         <Widget
@@ -137,7 +143,8 @@ function App() {
           subtitle="Chipotle Questions"
           handleQuickButtonClicked={hanleQuckButtonClick}
           emojis={false}
-          imagePreview
+          imagePreview={true}
+          sendImageFile={sendImageFile}
         />
       </div>
     );
