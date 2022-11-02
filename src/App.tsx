@@ -14,7 +14,7 @@ interface MenuItems {
 
 export type TFile = {
   source?: string;
-  file?: File;
+  file: File;
 }
 
 interface FormIoResponse {
@@ -60,6 +60,11 @@ function App() {
   const [formSubmissionId, setFormSubmissionId] = useState('')
 
   const newDate = new Date().toString();
+
+  const sendImageFile = (p: TFile[]) => {
+    setImage(p)
+    console.log('image has been updated', p)
+  }
 
   useEffect(() => {
     // {{projectUrl}}/form/{{formId}}
@@ -107,79 +112,110 @@ function App() {
           const previousData = res.data.data
           const key = formIoData.data.components[index].key
           const obj: any = {};
-          obj[key] = message
-          console.log('obj on put', obj)
-          console.log('obj previous', previousData)
-          console.log('submission id', formIoData.data._id)
-          axios.put(`https://mykkomypewprmxq.form.io/funform/submission/${formSubmissionId}`, {
-            data: {
-              ...obj,
-              ...previousData
+          if (key === 'GDPR') {
+            if (message === ('No')) {
+              console.log('end it here')
+              return
             }
-          }).then(result => {
-            console.log('result from put', result)
-            setIndex(index + 1)
-            setSubmit(false)
-          }).catch(error => {
-            console.log('error', error)
-          })
+          }
+          if (message.includes('data:')) {
+            console.log('check me', image[0])
+            var formData = new FormData();
+            const file = image[0].file
+            formData.append('file', file)
+            axios.post(`https://dash-api.sympler.co/api/v1/uploadimage`,
+              formData,
+            ).then(result => {
+              console.log('sympler result', result)
+              const imageMessage = result.data.file
+              obj[key] = imageMessage
+              axios.put(`https://mykkomypewprmxq.form.io/funform/submission/${formSubmissionId}`, {
+                data: {
+                  ...obj,
+                  ...previousData
+                }
+              }).then(result => {
+                console.log('result from put', result)
+                setIndex(index + 1)
+                setSubmit(false)
+              }).catch(error => {
+                console.log('error', error)
+              })
+            }).catch(error => {
+              console.log('error sending the image to sympler', error)
+            })
+          } else {
+            obj[key] = message
+            console.log('obj on put', obj)
+            console.log('obj previous', previousData)
+            console.log('submission id', formIoData.data._id)
+            axios.put(`https://mykkomypewprmxq.form.io/funform/submission/${formSubmissionId}`, {
+              data: {
+                ...obj,
+                ...previousData
+              }
+            }).then(result => {
+              console.log('result from put', result)
+              setIndex(index + 1)
+              setSubmit(false)
+            }).catch(error => {
+              console.log('error', error)
+            })
+          }
         }).catch(error => {
           console.log('couldnt get submission', error)
         })
-        
+
       }
     }
   }
 
   const askQuestion = async (message?: string) => {
-    console.log('askquesion is being run')
-    let i = index
     if (formIoData) {
-      console.log('askquesion formdata')
-      if (index >= formIoData?.data.components.length - 1) {
-        console.log('all questions have been answered')
-      } else if (formIoData.data.components[index].label.includes('GetTimeZone')) {
-        console.log('askquesion is being run, inside else if')
-        setSubmit(true)
-        await submitData(newDate.slice(newDate.indexOf('('), newDate.lastIndexOf(')') + 1), index)
-        return
-      }
-      if (message && submit === false) {
-        await submitData(message, index)
-          // addResponseMessage(formIoData.data.components[index].label)
-        if (formIoData.data.components[index].data) {
-          console.log('hello why is this not working')
-          setQuickButtons(formIoData.data.components[index].data.values ?? [])
-        } else {
-          setQuickButtons([])
+      setTimeout( async() => {
+        if (index >= formIoData?.data.components.length - 1) {
+          console.log('all questions have been answered')
+        } else if (formIoData.data.components[index].label.includes('GetTimeZone')) {
+          setSubmit(true)
+          await submitData(newDate.slice(newDate.indexOf('('), newDate.lastIndexOf(')') + 1), index)
+          return
         }
-      } else {
-        console.log('index before it adds reponse', index)
-        addResponseMessage(formIoData.data.components[index].label)
-        if (formIoData.data.components[index].data) {
-          console.log('hello why is this not working')
-          setQuickButtons(formIoData.data.components[index].data.values ?? [])
-        } else {
-          setQuickButtons([])
-        }
-        if (message) {
-          console.log('askquesion is being run not insided')
-          console.log('new message', message)
+        if (message && submit === false) {
+          console.log('image', image)
           await submitData(message, index)
+          // addResponseMessage(formIoData.data.components[index].label)
+          if (formIoData.data.components[index].data) {
+            setQuickButtons(formIoData.data.components[index].data.values ?? [])
+          } else {
+            setQuickButtons([])
+          }
+        } else {
+          console.log('index before it adds reponse', index)
+          addResponseMessage(formIoData.data.components[index].label)
+          if (formIoData.data.components[index].data) {
+            console.log('hello why is this not working')
+            setQuickButtons(formIoData.data.components[index].data.values ?? [])
+          } else {
+            setQuickButtons([])
+          }
+          if (message) {
+            console.log('askquesion is being run not insided')
+            console.log('new message', message)
+            await submitData(message, index)
+          }
         }
-      }
+      }, 2000)
     }
   }
 
   useEffect(() => {
-    console.log('is this running')
     askQuestion()
   }, [index, formIoData])
 
-  const sendImageFile = (p: TFile[]) => {
-    console.log('image has been updated', p)
-    setImage(p)
-  }
+  // useEffect(() => {
+  //   console.log('image being passed to', image)
+  //   if (image.length >= 1) {
+  //   }, [image])
 
   console.log('form', formIoData)
 
