@@ -44,13 +44,13 @@ interface UserResponse {
   message: string,
 }
 
-interface dataPost {
-  data: {
-
-  }
+interface ChatProps {
+  urlParam: string
 }
 
-function App() {
+
+
+const SymplerChat: React.FC<ChatProps> = ({urlParam}) => {
   const [formIoData, setFormIoData] = useState<FormIoResponse>()
   const [image, setImage] = useState<TFile[]>([]);
   const [sessionStarted, setSessionStarted] = useState(false);
@@ -61,7 +61,7 @@ function App() {
 
   const newDate = new Date().toString();
 
-  const sendImageFile = (p: TFile[]) => {
+  const sendImageFile = async (p: TFile[]) => {
     setImage(p)
     console.log('image has been updated', p)
   }
@@ -107,21 +107,23 @@ function App() {
         })
       } else if (formIoData.data._id && sessionStarted) {
         // Get the previous submissions
-        axios.get(`https://mykkomypewprmxq.form.io/funform/submission/${formSubmissionId}`).then(res => {
+        axios.get(`https://mykkomypewprmxq.form.io/funform/submission/${formSubmissionId}`).then(async res => {
           console.log('get previous submission', res)
           const previousData = res.data.data
           const key = formIoData.data.components[index].key
           const obj: any = {};
           if (key === 'GDPR') {
-            if (message === ('No')) {
+            if (message !== ('Yes')) {
               console.log('end it here')
               return
             }
           }
           if (message.includes('data:')) {
-            console.log('check me', image[0])
+            const base64Source = message.slice(message.indexOf('(') + 1, message.lastIndexOf(')'))
+            const base64Response = await fetch(base64Source)
+            const blob = await base64Response.blob();
+            const file = new File([blob], `${formIoData.data.components[index].key}_fileUpload`)
             var formData = new FormData();
-            const file = image[0].file
             formData.append('file', file)
             axios.post(`https://dash-api.sympler.co/api/v1/uploadimage`,
               formData,
@@ -204,7 +206,7 @@ function App() {
             await submitData(message, index)
           }
         }
-      }, 2000)
+      }, 100)
     }
   }
 
@@ -247,4 +249,4 @@ function App() {
   );
 }
 
-export default App;
+export default SymplerChat;
