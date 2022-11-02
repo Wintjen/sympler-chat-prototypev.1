@@ -34,6 +34,7 @@ interface FormIoResponse {
         type: string
       }
     ]
+    data: any
     _id: string
   }
 }
@@ -94,27 +95,38 @@ function App() {
             setSessionStarted(true)
             setIndex(index + 1)
             console.log('this is running lmao')
-            setSubmit(true)
+            setSubmit(false)
           }).catch(error => {
             console.log('error', error)
           })
         })
       } else if (formIoData.data._id && sessionStarted) {
-        const key = formIoData.data.components[index].key
-        const obj: any = {};
-        obj[key] = message
-        console.log('obj on put', obj)
-        console.log('submission id', formIoData.data._id)
-        axios.put(`https://mykkomypewprmxq.form.io/funform/submission/${formSubmissionId}`, {
-          data: {
-            ...obj
-          }
-        }).then(result => {
-          console.log('result from put', result)
-          setIndex(index + 1)
+        // Get the previous submissions
+        axios.get(`https://mykkomypewprmxq.form.io/funform/submission/${formSubmissionId}`).then(res => {
+          console.log('get previous submission', res)
+          const previousData = res.data.data
+          const key = formIoData.data.components[index].key
+          const obj: any = {};
+          obj[key] = message
+          console.log('obj on put', obj)
+          console.log('obj previous', previousData)
+          console.log('submission id', formIoData.data._id)
+          axios.put(`https://mykkomypewprmxq.form.io/funform/submission/${formSubmissionId}`, {
+            data: {
+              ...obj,
+              ...previousData
+            }
+          }).then(result => {
+            console.log('result from put', result)
+            setIndex(index + 1)
+            setSubmit(false)
+          }).catch(error => {
+            console.log('error', error)
+          })
         }).catch(error => {
-          console.log('error', error)
+          console.log('couldnt get submission', error)
         })
+        
       }
     }
   }
@@ -128,13 +140,13 @@ function App() {
         console.log('all questions have been answered')
       } else if (formIoData.data.components[index].label.includes('GetTimeZone')) {
         console.log('askquesion is being run, inside else if')
-        // setSubmit(true)
+        setSubmit(true)
         await submitData(newDate.slice(newDate.indexOf('('), newDate.lastIndexOf(')') + 1), index)
         return
       }
-      if (message) {
+      if (message && submit === false) {
         await submitData(message, index)
-          addResponseMessage(formIoData.data.components[index].label)
+          // addResponseMessage(formIoData.data.components[index].label)
         if (formIoData.data.components[index].data) {
           console.log('hello why is this not working')
           setQuickButtons(formIoData.data.components[index].data.values ?? [])
