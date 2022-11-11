@@ -5,6 +5,6 @@ import './index.css';
 import App from './App';
 
     ReactDOM.render(
-      <App endpoint='mykkomypewprmxq' formName='funform' />,
+      <App />,
       document.getElementById('root')
     );
